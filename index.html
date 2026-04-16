@@ -12,12 +12,10 @@
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.8rem; color: #444; margin-bottom: 5px; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
         
-        /* CARITAS UNIFORMES */
         .rating-box { display: flex; justify-content: space-around; background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
         .face { font-size: 2.2rem; cursor: pointer; color: #ccc; transition: 0.3s; filter: grayscale(1); }
         .face.active { color: var(--red); filter: grayscale(0); transform: scale(1.2); }
 
-        /* BOTONES DE EFECTIVIDAD */
         .efectividad-group { display: flex; gap: 10px; margin-top: 5px; }
         .btn-efect { flex: 1; padding: 12px 5px; border: 2px solid #eee; border-radius: 8px; background: white; cursor: pointer; font-size: 0.75rem; font-weight: bold; color: var(--grey); transition: 0.3s; text-align: center; }
         .btn-efect.active[data-val="0"] { border-color: #ff4d4d; background: #fff5f5; color: #ff4d4d; }
@@ -54,20 +52,20 @@
         <option value="Laminado 2">Laminado 2</option>
     </select>
 
-    <label>Colaborador / Código</label>
-    <div style="display: flex; gap: 5px;">
-        <input type="text" id="colaborador" style="flex: 2;" placeholder="Nombre">
-        <input type="text" id="codigo" style="flex: 1;" placeholder="Cédula">
-    </div>
+    <label>Nombre del Colaborador</label>
+    <input type="text" id="colaborador" placeholder="Nombre completo">
 
-    <label>Instructor</label>
-    <input type="text" id="instructor" placeholder="Nombre formador">
+    <label>Cédula de Ciudadanía</label>
+    <input type="text" id="codigo" placeholder="Número de documento">
 
-    <label>Tema / Procedimiento</label>
-    <textarea id="tema" rows="2" placeholder="¿Qué se enseñó?"></textarea>
+    <label>Instructor / Formador</label>
+    <input type="text" id="instructor" placeholder="Quién dicta la capacitación">
 
-    <label>Tiempo (minutos)</label>
-    <input type="number" id="tiempo" placeholder="Ej: 45">
+    <label>Tema de Capacitación</label>
+    <textarea id="tema" rows="2" placeholder="Describa el tema tratado"></textarea>
+
+    <label>Duración (minutos)</label>
+    <input type="number" id="tiempo" placeholder="Ej: 30">
 
     <label style="text-align: center;">¿Cómo calificas la capacitación?</label>
     <div class="rating-box">
@@ -134,7 +132,7 @@
         c.getContext('2d').drawImage(video, 0, 0, 640, 480);
         imagenB64 = c.toDataURL('image/jpeg', 0.5);
         preview.src = imagenB64; preview.style.display = "block"; video.style.display = "none";
-        statusText.innerText = "Evidencia capturada correctamente.";
+        statusText.innerText = "Evidencia capturada.";
     }
 
     function cargarImagen(e) {
@@ -144,7 +142,6 @@
             preview.src = r.result; 
             preview.style.display = "block"; 
             video.style.display = "none"; 
-            statusText.innerText = "Imagen cargada desde galería.";
         };
         r.readAsDataURL(e.target.files[0]);
     }
@@ -164,11 +161,11 @@
         };
 
         if(!payload.colaborador || !payload.cedula || !payload.tema || !imagenB64) {
-            return alert("Por favor completa todos los campos y toma la foto de evidencia.");
+            return alert("Por favor completa nombre, cédula, tema y evidencia fotográfica.");
         }
 
         btnEnviar.disabled = true;
-        statusText.innerText = "Sincronizando con Servidores Primadera...";
+        statusText.innerText = "Sincronizando con Primadera...";
 
         try {
             const response = await fetch(flowURL, {
@@ -178,15 +175,15 @@
             });
 
             if (response.ok) {
-                alert("✅ Registro guardado exitosamente en el Excel.");
+                alert("✅ Registro guardado con éxito.");
                 location.reload();
             } else {
-                throw new Error("Respuesta de servidor no válida");
+                throw new Error();
             }
         } catch (e) {
-            alert("Error de comunicación. El registro no pudo guardarse.");
+            alert("Error al guardar. Verifica tu conexión.");
             btnEnviar.disabled = false;
-            statusText.innerText = "Error al intentar sincronizar.";
+            statusText.innerText = "Error de sincronización.";
         }
     }
 </script>
