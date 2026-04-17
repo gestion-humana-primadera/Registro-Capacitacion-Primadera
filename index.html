@@ -17,7 +17,7 @@
         .face { font-size: 2.2rem; cursor: pointer; color: #ccc; transition: 0.3s; filter: grayscale(1); opacity: 0.5; }
         .face.active { color: var(--red); filter: grayscale(0); transform: scale(1.2); opacity: 1; }
 
-        /* Estilos Autonomía (Semáforo) */
+        /* Estilos Autonomía */
         .efectividad-group { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
         .btn-efect { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; background: white; cursor: pointer; font-size: 0.85rem; font-weight: bold; color: var(--grey); transition: 0.3s; text-align: left; }
         .btn-efect.active { transform: translateX(5px); }
@@ -134,29 +134,27 @@
             b.style = ""; 
         });
         el.classList.add('active');
-        // Estilos visuales rápidos de semáforo
         if(val === 1) { el.style.borderColor = "#9C1519"; el.style.background = "#fff5f5"; el.style.color = "#9C1519"; }
         if(val === 2) { el.style.borderColor = "#ffcc00"; el.style.background = "#fffdf0"; el.style.color = "#856404"; }
         if(val === 3) { el.style.borderColor = "#28a745"; el.style.background = "#f0fff4"; el.style.color = "#28a745"; }
         if(val === 4) { el.style.borderColor = "#16a34a"; el.style.background = "#16a34a"; el.style.color = "white"; }
     }
 
-    // Inicializar el botón por defecto visualmente
     setEfect(4, document.getElementById('btnListoDef'));
 
     function capturar() {
         const c = document.createElement('canvas');
         c.width = 640; c.height = 480;
         c.getContext('2d').drawImage(video, 0, 0, 640, 480);
-        imagenB64 = c.toDataURL('image/jpeg', 0.5).split(',')[1];
-        preview.src = c.toDataURL('image/jpeg'); preview.style.display = "block"; video.style.display = "none";
+        imagenB64 = c.toDataURL('image/jpeg', 0.5); // Enviamos el DataURI completo para que la fórmula del flujo funcione
+        preview.src = imagenB64; preview.style.display = "block"; video.style.display = "none";
         statusText.innerText = "Evidencia capturada.";
     }
 
     function cargarImagen(e) {
         const r = new FileReader();
         r.onload = () => { 
-            imagenB64 = r.result.split(',')[1]; 
+            imagenB64 = r.result; 
             preview.src = r.result; 
             preview.style.display = "block"; 
             video.style.display = "none"; 
@@ -166,6 +164,7 @@
 
     async function enviar() {
         const payload = {
+            fecha_manual: new Date().toLocaleString('es-CO'),
             linea: document.getElementById('linea').value,
             colaborador: document.getElementById('colaborador').value,
             cedula: document.getElementById('codigo').value,
@@ -174,8 +173,7 @@
             duracion_min: document.getElementById('tiempo').value,
             satisfaccion: satisfaccionVal,
             autonomia: efectividadVal,
-            archivoContenido: imagenB64,
-            archivoNombre: `Foto_${document.getElementById('codigo').value}_${Date.now()}.jpg`
+            imagenRaw: imagenB64 // Nombre exacto que busca tu Power Automate
         };
 
         if(!payload.colaborador || !payload.cedula || !payload.tema || !imagenB64) {
